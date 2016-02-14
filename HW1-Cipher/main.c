@@ -24,14 +24,14 @@ int main() {
         exit(1);
     }
     
-    //  1. Open file
+    //  1. Open file for reading.
     fd = open("in.txt",O_RDONLY);
     if (fd<0) { // failed to open file for reading.
         perror("in.txt");
         exit(2);
     }
     
-    //  2. Read file
+    //  2. Read file and store data in readPtr buffer.
     reader = read(fd, readPtr, pgSize);
     if (reader<0) { // Failed to read.
         perror("read");
@@ -50,11 +50,14 @@ int main() {
     close(fd);
 
 /////////////   Write       ///////////////////////////////////
+    //  1. Open file for writing
     fd = open("out.txt",O_WRONLY | O_TRUNC);    // O_CREAT, 777
     if (fd<0) { // failed to open file for writing.
         perror("out.txt");
         exit(4);
     }
+
+    //  2. Write to file
     writer = write(fd,readPtr,reader);
     if (writer<0) { // Failed to write.
         perror("write");
