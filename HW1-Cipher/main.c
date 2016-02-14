@@ -13,7 +13,7 @@
 
 int main() {
     int fd;     // file descriptor
-    int reader, writer; // # of bytes read/wrote from file.
+    int reader, writer; // # of bytes read/wrote from/to file.
     void *readPtr;  // read Buffer.
     //  Allocate memory for read buffer
     int pgSize = getpagesize();         // 
