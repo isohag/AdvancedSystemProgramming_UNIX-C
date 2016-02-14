@@ -8,13 +8,38 @@
 #include <stdlib.h>
 #include <fcntl.h>  //  Open
 #include <unistd.h> //  Read
+#include <pwd.h>    //  getpass(3)
 
 //#DEFINE filename ("in.txt")
+
+//  Helper methods
+    char* EncryptPass() {
+        //  Get password
+        char s1[128];
+        char s2[128];
+        char* temp; int i;
+        do {
+            temp = getpass("Encryption Password: ");
+            i = 0;
+            while(*temp !='\0') 
+                s1[i++] = *(temp++);    //  Copy pass word;
+            s1[i] = '\0';               // append null character.
+            i = 0;
+            temp = getpass("One More Time: ");
+            while(*temp !='\0')
+                s2[i++] = *(temp++);
+            s2[i] = '\0';
+            printf("Typed: %s & %s\n", s1, s2);
+        } while (strncmp(s1, s2, 128) != 0);
+        printf("Thanks\n");
+        return s1;
+    }
 
 int main() {
     int fd;     // file descriptor
     int reader, writer; // # of bytes read/wrote from/to file.
     void *readPtr;  // read Buffer.
+
     //  Allocate memory for read buffer
     int pgSize = getpagesize();         // 
     printf("Page size: %d\n", pgSize);
@@ -45,6 +70,10 @@ int main() {
     }
     readPtr -= reader;  // reset readPtr
     printf("\n");
+    
+    //  get password
+    char* pass = EncryptPass();
+    printf("Password: %s\n", pass);
     
     //  3. Close file
     close(fd);
