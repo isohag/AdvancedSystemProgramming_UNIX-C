@@ -1,3 +1,8 @@
+//  Assignment: HW1(Cipher)
+//  Author: Rashedul Khan (108921821)
+//  Class:  CSE 376 (Advanced Systems Programming in Unix/C).
+//  Instructor: Erez Zadok
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
