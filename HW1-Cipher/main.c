@@ -16,13 +16,10 @@
     char* EncryptPass() {
         //  Get password
         char s1[128];
-        char* temp; int i;
+        char* temp;
         do {
             temp = getpass("Encryption Password: ");
-            i = 0;
-            while(*temp !='\0') 
-                s1[i++] = *(temp++);    //  Copy pass word;
-            s1[i] = '\0';               // append null character.
+            strcpy(s1,temp);
             temp = getpass("One More Time: ");
             //printf("Typed: %s & %s\n", s1, s2);
         } while (strncmp(s1, temp, strlen(temp)) != 0);
