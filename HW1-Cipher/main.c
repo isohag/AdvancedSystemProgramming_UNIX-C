@@ -114,9 +114,9 @@ int main() {
     free(pass); //  Password no longer needed.
 
     //  1. Open file for writing
-    fd = open("decrypted.txt",O_WRONLY | O_TRUNC);    // O_CREAT, 777
+    fd = open("out.txt",O_WRONLY | O_TRUNC);    // O_CREAT, 777
     if (fd<0) { // failed to open file for writing.
-        perror("decrypted.txt");
+        perror("out.txt");
         exit(4);
     } 
 
