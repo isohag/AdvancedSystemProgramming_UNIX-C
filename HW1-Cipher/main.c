@@ -13,7 +13,7 @@
 //#DEFINE filename ("in.txt")
 
 //  Helper methods
-    char* EncryptPass() {
+    char* PassInput() {
         //  Get password
         char s1[128];
         char* temp;
@@ -21,8 +21,7 @@
             temp = getpass("Encryption Password: ");
             strcpy(s1,temp);
             temp = getpass("One More Time: ");
-            //printf("Typed: %s & %s\n", s1, s2);
-        } while (strncmp(s1, temp, strlen(temp)) != 0);
+        } while (strlen(s1)!=strlen(temp) || strcmp(s1, temp) != 0);
         printf("Thanks!!!\n");
         return temp;
     }
@@ -63,7 +62,7 @@ int main() {
 
 ///////  Cipher Encryption Algorithm.  ////////////////////////////////////////
     //  get password
-    passin = EncryptPass();  //  Retrieve user entered password.
+    passin = PassInput();  //  Retrieve user entered password.
     char * pass = malloc(strlen(passin) + 1);
     strcpy(pass, passin);
     printf("Password: '%s' Length: %lu\n", pass, strlen(pass));
@@ -93,7 +92,7 @@ int main() {
 //////////  Cipher Decryption Algorithm.  //////////////////////////////////////////
     ///////     Check for Password     /////////////////
     passin = getpass("Password for Decryption: ");
-    while (strncmp(passin, pass, strlen(passin)) != 0) {
+    while (strlen(pass) != strlen(passin) || strncmp(passin, pass, strlen(passin)) != 0) {
         passin = getpass("Try again: ");
     }
     printf("Congratz! Decryption process started.\n");
