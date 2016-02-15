@@ -1,4 +1,5 @@
 hello world, 
-I  have concured file reading/writing bytes by bytes using system calls!!!
+I  have concured the knowledge of reading/writing files byte by byte using system calls!!!
 
-1. implemented a helper method to retrieve password from user using getpass(3) library function call.
+System Calls:	READ(2), WRITE(2), OPEN(2)
+Library Calls:	getpagesize(3), perror(3), getpass(3), malloc(3), strlen(3), strncmp(3)
