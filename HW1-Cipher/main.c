@@ -22,7 +22,7 @@
             strcpy(s1,temp);
             temp = getpass("One More Time: ");
         } while (strlen(s1)!=strlen(temp) || strcmp(s1, temp) != 0);
-        printf("Thanks!!!\n");
+        printf("Thanks! Password to Decrypt: \"%s\"\n", temp);
         return temp;
     }
 
@@ -65,7 +65,6 @@ int main() {
     passin = PassInput();  //  Retrieve user entered password.
     char * pass = malloc(strlen(passin) + 1);
     strcpy(pass, passin);
-    printf("Password: '%s' Length: %lu\n", pass, strlen(pass));
 
 //////    Write              /////////////
 
@@ -88,6 +87,7 @@ int main() {
         exit(5);
     } 
     close(fd);
+    printf("out.txt has been Encrypted!\n");
 
 //////////  Cipher Decryption Algorithm.  //////////////////////////////////////////
     ///////     Check for Password     /////////////////
@@ -127,7 +127,7 @@ int main() {
         exit(5);
     }
     close(fd);   // File Descriptor no longer needed. 
-
+    printf("Decryption Complete!!!\n");
 
     //  Clean up.
     free(readPtr);
