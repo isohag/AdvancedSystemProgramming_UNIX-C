@@ -34,6 +34,7 @@ int main() {
     int fd;     // file descriptor
     int reader, writer; // # of bytes read/wrote from/to file.
     void *readPtr;  // read Buffer.
+    char *passin;   // Password Buffer from getpass(3)
 
     //  Allocate memory for read buffer
     int pgSize = getpagesize();         // 
@@ -59,22 +60,18 @@ int main() {
         exit(3);
     }
     printf("Bytes read: %d\n", reader);
-    for (int i=0;i<reader;i++) {
-        printf("%c", *(char*) readPtr);
-        readPtr++;
-    }
-    readPtr -= reader;  // reset readPtr
-    printf("\n");
 
     //  3. Close file
     close(fd);
 
 ///////  Cipher Encryption Algorithm.  ////////////////////////////////////////
     //  get password
-    char* pass = EncryptPass();
-    printf("Password: %s Length: %lu\n", pass, strlen(pass));
+    passin = EncryptPass();  //  Retrieve user entered password.
+    char * pass = malloc(strlen(passin) + 1);
+    strcpy(pass, passin);
+    printf("Password: '%s' Length: %lu\n", pass, strlen(pass));
 
-//// Write /////////////
+//////    Write              /////////////
 
     //  1. Open file for writing
     fd = open("out.txt",O_WRONLY | O_TRUNC);    // O_CREAT, 777
@@ -87,22 +84,22 @@ int main() {
     for (int i=0;i<reader;i++) {
         *((char*)readPtr+i) = (*((char*)readPtr+i)) ^ (*(pass+(i%len)));
     }
-    void* writePtr = readPtr;
+
     //  2. Write to file
-    writer = write(fd,writePtr,reader);
+    writer = write(fd,readPtr,reader);
     if (writer<0) { // Failed to write.
         perror("write");
         exit(5);
     } 
     close(fd);
+
 //////////  Cipher Decryption Algorithm.  //////////////////////////////////////////
     ///////     Check for Password     /////////////////
-    char* temp = getpass("Password for Decryption: ");
-    printf("entered: %s\n", temp);
-    while (strncmp(pass, temp, strlen(pass)) != 0) {
-        temp = getpass("Try again: ");
+    passin = getpass("Password for Decryption: ");
+    while (strncmp(passin, pass, strlen(passin)) != 0) {
+        passin = getpass("Try again: ");
     }
-    printf("Congratz! \n");
+    printf("Congratz! Decryption process started.\n");
 
     ////////    Open &  Write       /////////////////
     fd = open("out.txt",O_RDONLY);
@@ -111,12 +108,14 @@ int main() {
         exit(4);
     }
     reader = read(fd, readPtr, pgSize);
-    printf("Pass: %s\n", pass);
+    close(fd);  // File Descriptor no longer needed.
+
     //  Cipher Algorithm.
     for (int i=0;i<reader;i++) {
         *((char*)readPtr+i) = (*((char*)readPtr+i)) ^ (*(pass+(i%len)));
     }
-    close(fd);
+
+    free(pass); //  Password no longer needed.
 
     //  1. Open file for writing
     fd = open("decrypted.txt",O_WRONLY | O_TRUNC);    // O_CREAT, 777
@@ -130,11 +129,12 @@ int main() {
     if (writer<0) { // Failed to write.
         perror("write");
         exit(5);
-    }    
+    }
+    close(fd);   // File Descriptor no longer needed. 
 
 
     //  Clean up.
-    close(fd);
     free(readPtr);
+    //free(temp);
     exit (0);
 }
