@@ -14,6 +14,7 @@
 
 //  Helper methods
     char* PassInput() {
+    	printf("Hello Makefile\n");
         //  Get password
         char s1[128];
         char* temp;
@@ -27,10 +28,11 @@
     }
 
 int main() {
-    int fd;     // file descriptor
-    int reader, writer; // # of bytes read/wrote from/to file.
-    void *readPtr;  // read Buffer.
-    char *passin;   // Password Buffer from getpass(3)
+    int fd;     		// file descriptor
+    int bytes_read; 	// # of bytes read from file.
+    int bytes_wrote;	// # of bytes wrote to file.
+    void *readPtr;  	// read Buffer.
+    char *passin;   	// Password Buffer from getpass(3)
 
     //  Allocate memory for read buffer
     int pgSize = getpagesize();         // 
@@ -49,13 +51,13 @@ int main() {
     }
     
     //  2. Read file and store data in readPtr buffer.
-    reader = read(fd, readPtr, pgSize);
-    if (reader<0) { // Failed to read.
+    bytes_read = read(fd, readPtr, pgSize);
+    if (bytes_read<0) { // Failed to read.
         perror("read");
         close(fd);
         exit(3);
     }
-    printf("Bytes read: %d\n", reader);
+    printf("Bytes read: %d\n", bytes_read);
 
     //  3. Close file
     close(fd);
@@ -76,13 +78,15 @@ int main() {
     }
     //  Cipher algorithm.
     int len = strlen(pass);
-    for (int i=0;i<reader;i++) {
+    for (int i=0;i<bytes_read;i++) {
         *((char*)readPtr+i) = (*((char*)readPtr+i)) ^ (*(pass+(i%len)));
     }
 
     //  2. Write to file
-    writer = write(fd,readPtr,reader);
-    if (writer<0) { // Failed to write.
+    //	error checking (likely): ENOMEM, EIO
+    //	error checking (more likely): ENOSPC, ENOQUOTA
+    bytes_wrote = write(fd,readPtr,bytes_read);
+    if (bytes_wrote<0) { // Failed to write.
         perror("write");
         exit(5);
     } 
@@ -103,11 +107,11 @@ int main() {
         perror("out.txt for Decryption");
         exit(4);
     }
-    reader = read(fd, readPtr, pgSize);
+    bytes_read = read(fd, readPtr, pgSize);
     close(fd);  // File Descriptor no longer needed.
 
     //  Cipher Algorithm.
-    for (int i=0;i<reader;i++) {
+    for (int i=0;i<bytes_read;i++) {
         *((char*)readPtr+i) = (*((char*)readPtr+i)) ^ (*(pass+(i%len)));
     }
 
@@ -121,8 +125,8 @@ int main() {
     } 
 
     //  2. Write to file
-    writer = write(fd,readPtr,reader);
-    if (writer<0) { // Failed to write.
+    bytes_wrote = write(fd,readPtr,bytes_read);
+    if (bytes_wrote<0) { // Failed to write.
         perror("write");
         exit(5);
     }
